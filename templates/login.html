@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="bn">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🔒 {{ "Login" if lang == "en" else "লগইন" }} — {{ "Medicine Reminder" if lang == "en" else "ওষুধের রিমাইন্ডার" }}</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background: linear-gradient(135deg, #1d1d1f, #2c2c2e);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Segoe UI', sans-serif;
+        }
+
+        .login-card {
+            background: #fff;
+            border-radius: 16px;
+            padding: 2.5rem;
+            width: 100%;
+            max-width: 380px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, .25);
+        }
+
+        .login-card h2 {
+            font-weight: 700;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="login-card">
+        <div class="d-flex justify-content-end mb-2">
+            {% if lang == "en" %}
+            <a class="btn btn-sm btn-outline-secondary" href="/language/bn">বাংলা</a>
+            {% else %}
+            <a class="btn btn-sm btn-outline-secondary" href="/language/en">English</a>
+            {% endif %}
+        </div>
+        <h2 class="text-center mb-4">💊 {{ "Medicine Reminder" if lang == "en" else "ওষুধের রিমাইন্ডার" }}</h2>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+        {% for cat, msg in messages %}
+        <div class="alert alert-{{ cat }} py-2 small">{{ msg }}</div>
+        {% endfor %}
+        {% endwith %}
+
+        <form method="POST" action="/login">
+            <div class="mb-3">
+                <label class="form-label">{{ "Password" if lang == "en" else "পাসওয়ার্ড" }}</label>
+                <input type="password" class="form-control" name="password" placeholder="{{ 'Enter password' if lang == 'en' else 'পাসওয়ার্ড দিন' }}" required
+                    autofocus>
+            </div>
+            <button class="btn btn-primary w-100" type="submit">{{ "Log In" if lang == "en" else "লগইন করুন" }}</button>
+        </form>
+    </div>
+</body>
+
+</html>
