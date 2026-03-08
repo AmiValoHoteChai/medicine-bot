@@ -5,9 +5,9 @@ After=network.target
 [Service]
 Type=simple
 User=ubuntu
-WorkingDirectory=/home/ubuntu/Medicine/medicine-bot
-EnvironmentFile=/home/ubuntu/Medicine/medicine-bot/.env
-ExecStart=/home/ubuntu/Medicine/medicine-bot/venv/bin/gunicorn -w 1 -b 127.0.0.1:5000 app:app
+WorkingDirectory=/home/ubuntu/medicine-bot
+EnvironmentFile=/home/ubuntu/medicine-bot/.env
+ExecStart=/home/ubuntu/medicine-bot/venv/bin/gunicorn -w 1 -b 0.0.0.0:5000 app:app
 Restart=always
 RestartSec=5
 
