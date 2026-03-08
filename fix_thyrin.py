@@ -12,10 +12,10 @@ for m in meds:
 
 # Add the two Thyrox entries
 START = "2026-03-08"
-db.add_medicine("Thyrox 50mcg", "থাইরক্স ৫০", "১টা", "shokal", "age", "খালি পেটে", START, None, None)
-print("  ✅ Added: Thyrox 50mcg (1 tab)")
+db.add_medicine("Thyrox 50mg", "থাইরক্স ৫০", "১টা", "shokal", "age", "খালি পেটে", START, None, None)
+print("  ✅ Added: Thyrox 50mg (1 tab)")
 
-db.add_medicine("Thyrox 25mcg", "থাইরক্স ২৫", "১টা", "shokal", "age", "খালি পেটে", START, None, None)
-print("  ✅ Added: Thyrox 25mcg (1 tab)")
+db.add_medicine("Thyrox 25mg", "থাইরক্স ২৫", "১টা", "shokal", "age", "খালি পেটে", START, None, None)
+print("  ✅ Added: Thyrox 25mg (1 tab)")
 
 print("\n🎉 Done!")

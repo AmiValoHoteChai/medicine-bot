@@ -158,7 +158,8 @@
 
   <!-- Navbar -->
   <nav class="navbar navbar-dark px-3 py-2 mb-4">
-    <span class="navbar-brand">💊 {{ "Medicine Reminder Dashboard" if lang == "en" else "ওষুধের রিমাইন্ডার ড্যাশবোর্ড" }}</span>
+    <span class="navbar-brand">💊 {{ "Medicine Reminder Dashboard" if lang == "en" else "ওষুধের রিমাইন্ডার ড্যাশবোর্ড"
+      }}</span>
     <div>
       <span class="text-secondary small me-3">Telegram Bot</span>
       {% if lang == "en" %}
@@ -194,13 +195,15 @@
         ] %}
         <div class="card section-card session-{{ css }}">
           <div class="card-header bg-white d-flex justify-content-between align-items-center py-3">
-            <span class="session-title">{{ icon }} {{ (label_en if lang == "en" else label_bn) }} {{ "Medicines" if lang == "en" else "ের ওষুধ" }}</span>
+            <span class="session-title">{{ icon }} {{ (label_en if lang == "en" else label_bn) }} {{ "Medicines" if lang
+              == "en" else "ের ওষুধ" }}</span>
             <div class="d-flex gap-2 align-items-center">
               <span class="time-badge time-{{ css }}">
                 {{ settings[session+'_time'] }}
               </span>
               <form method="POST" action="/test/send/{{ session }}" class="m-0">
-                <button class="btn btn-sm btn-outline-secondary" title="{{ 'Send now (test)' if lang == 'en' else 'এখনই পাঠাও (টেস্ট)' }}">
+                <button class="btn btn-sm btn-outline-secondary"
+                  title="{{ 'Send now (test)' if lang == 'en' else 'এখনই পাঠাও (টেস্ট)' }}">
                   <i class="bi bi-send"></i> {{ "Test" if lang == "en" else "টেস্ট" }}
                 </button>
               </form>
@@ -224,8 +227,8 @@
                 {% for m in meds %}
                 <tr class="med-row {{ 'inactive' if not m.active }}">
                   <td>
-                    <strong>{{ m.name_bn or m.name }}</strong>
-                    {% if m.name_bn %}<br><small class="text-muted">{{ m.name }}</small>{% endif %}
+                    <strong>{{ m.name }}</strong>
+                    {% if m.name_bn %}<br><small class="text-muted">{{ m.name_bn }}</small>{% endif %}
                   </td>
                   <td class="hide-sm">{{ m.effective_dose or m.dose }}</td>
                   <td>
@@ -257,7 +260,8 @@
                       </button>
                       <form method="POST" action="/medicine/delete/{{ m.id }}"
                         onsubmit="return confirm('{{ 'Delete this medicine?' if lang == 'en' else 'মুছে ফেলবেন?' }}')">
-                        <button class="btn btn-sm btn-outline-danger" title="{{ 'Delete' if lang == 'en' else 'মুছুন' }}">
+                        <button class="btn btn-sm btn-outline-danger"
+                          title="{{ 'Delete' if lang == 'en' else 'মুছুন' }}">
                           <i class="bi bi-trash"></i>
                         </button>
                       </form>
@@ -278,7 +282,8 @@
                           {{ render_med_form(m) }}
                         </div>
                         <div class="modal-footer">
-                          <button type="submit" class="btn btn-primary">{{ "Save" if lang == "en" else "সংরক্ষণ করুন" }}</button>
+                          <button type="submit" class="btn btn-primary">{{ "Save" if lang == "en" else "সংরক্ষণ করুন"
+                            }}</button>
                         </div>
                       </form>
                     </div>
@@ -288,7 +293,8 @@
                 {% endfor %}
                 {% else %}
                 <tr>
-                  <td colspan="5" class="text-center text-muted py-3">{{ "No medicines yet" if lang == "en" else "কোনো ওষুধ নেই" }}</td>
+                  <td colspan="5" class="text-center text-muted py-3">{{ "No medicines yet" if lang == "en" else "কোনো
+                    ওষুধ নেই" }}</td>
                 </tr>
                 {% endif %}
               </tbody>
@@ -305,13 +311,17 @@
                 <input type="hidden" name="session" value="{{ session }}">
                 <div class="row g-2">
                   <div class="col-sm-6">
-                    <input class="form-control form-control-sm" name="name" placeholder="{{ 'Medicine name (English)' if lang == 'en' else 'ওষুধের নাম (English)' }}" required>
+                    <input class="form-control form-control-sm" name="name"
+                      placeholder="{{ 'Medicine name (English)' if lang == 'en' else 'ওষুধের নাম (English)' }}"
+                      required>
                   </div>
                   <div class="col-sm-6">
-                    <input class="form-control form-control-sm" name="name_bn" placeholder="{{ 'Bangla name (optional)' if lang == 'en' else 'নাম বাংলায় (ঐচ্ছিক)' }}">
+                    <input class="form-control form-control-sm" name="name_bn"
+                      placeholder="{{ 'Bangla name (optional)' if lang == 'en' else 'নাম বাংলায় (ঐচ্ছিক)' }}">
                   </div>
                   <div class="col-sm-4">
-                    <input class="form-control form-control-sm" name="dose" placeholder="{{ 'Dose' if lang == 'en' else 'ডোজ' }}" value="১টা">
+                    <input class="form-control form-control-sm" name="dose"
+                      placeholder="{{ 'Dose' if lang == 'en' else 'ডোজ' }}" value="১টা">
                   </div>
                   <div class="col-sm-4">
                     <select class="form-select form-select-sm" name="timing" required>
@@ -320,18 +330,21 @@
                     </select>
                   </div>
                   <div class="col-sm-4">
-                    <input class="form-control form-control-sm" name="note" placeholder="{{ 'Note (optional)' if lang == 'en' else 'নোট (ঐচ্ছিক)' }}">
+                    <input class="form-control form-control-sm" name="note"
+                      placeholder="{{ 'Note (optional)' if lang == 'en' else 'নোট (ঐচ্ছিক)' }}">
                   </div>
                   <div class="col-sm-4">
                     <label class="form-label small">{{ "Start Date" if lang == "en" else "শুরুর তারিখ" }}</label>
                     <input type="date" class="form-control form-control-sm" name="start_date">
                   </div>
                   <div class="col-sm-4">
-                    <label class="form-label small">{{ "End Date (optional)" if lang == "en" else "শেষ তারিখ (ঐচ্ছিক)" }}</label>
+                    <label class="form-label small">{{ "End Date (optional)" if lang == "en" else "শেষ তারিখ (ঐচ্ছিক)"
+                      }}</label>
                     <input type="date" class="form-control form-control-sm" name="end_date">
                   </div>
                   <div class="col-sm-4">
-                    <label class="form-label small">{{ "Dose Plan (optional)" if lang == "en" else "ডোজ পরিকল্পনা (ঐচ্ছিক)" }}</label>
+                    <label class="form-label small">{{ "Dose Plan (optional)" if lang == "en" else "ডোজ পরিকল্পনা
+                      (ঐচ্ছিক)" }}</label>
                     <input class="form-control form-control-sm" name="dose_plan"
                       placeholder="{{ '3:3, 3:2, 3:1' if lang == 'en' else '3:3, 3:2, 3:1' }}">
                   </div>
@@ -365,7 +378,8 @@
                         {{ 'text-muted' if not r.active }}">
                 <div>
                   <strong>{{ r.name }}</strong>
-                  {% if not r.active %}<span class="badge bg-secondary ms-1">{{ "Off" if lang == "en" else "বন্ধ" }}</span>{% endif %}
+                  {% if not r.active %}<span class="badge bg-secondary ms-1">{{ "Off" if lang == "en" else "বন্ধ"
+                    }}</span>{% endif %}
                   <br><code class="small text-muted">ID: {{ r.chat_id }}</code>
                 </div>
                 <div class="d-flex gap-1">
@@ -374,7 +388,8 @@
                       <i class="bi {{ 'bi-pause-fill' if r.active else 'bi-play-fill' }}"></i>
                     </button>
                   </form>
-                  <form method="POST" action="/recipient/delete/{{ r.id }}" onsubmit="return confirm('{{ 'Delete recipient?' if lang == 'en' else 'মুছে ফেলবেন?' }}')">
+                  <form method="POST" action="/recipient/delete/{{ r.id }}"
+                    onsubmit="return confirm('{{ 'Delete recipient?' if lang == 'en' else 'মুছে ফেলবেন?' }}')">
                     <button class="btn btn-sm btn-outline-danger">
                       <i class="bi bi-trash"></i>
                     </button>
@@ -382,7 +397,8 @@
                 </div>
               </li>
               {% else %}
-              <li class="list-group-item text-center text-muted">{{ "No recipients yet" if lang == "en" else "কেউ যোগ করা হয়নি" }}</li>
+              <li class="list-group-item text-center text-muted">{{ "No recipients yet" if lang == "en" else "কেউ যোগ
+                করা হয়নি" }}</li>
               {% endfor %}
             </ul>
           </div>
@@ -393,13 +409,16 @@
             <div class="collapse mt-3" id="addRecipient">
               <form method="POST" action="/recipient/add">
                 <div class="mb-2">
-                  <input class="form-control form-control-sm" name="name" placeholder="{{ 'Name (e.g. Dad)' if lang == 'en' else 'নাম (যেমন: আব্বু)' }}" required>
+                  <input class="form-control form-control-sm" name="name"
+                    placeholder="{{ 'Name (e.g. Dad)' if lang == 'en' else 'নাম (যেমন: আব্বু)' }}" required>
                 </div>
                 <div class="mb-2">
                   <input class="form-control form-control-sm" name="chat_id" placeholder="Telegram Chat ID" required>
-                  <div class="form-text small">{{ "Send /start to the bot for auto-register." if lang == "en" else "বটকে /start পাঠালে স্বয়ংক্রিয় যোগ হবে" }}</div>
+                  <div class="form-text small">{{ "Send /start to the bot for auto-register." if lang == "en" else "বটকে
+                    /start পাঠালে স্বয়ংক্রিয় যোগ হবে" }}</div>
                 </div>
-                <button class="btn btn-sm btn-primary" type="submit">{{ "Add" if lang == "en" else "যোগ করুন" }}</button>
+                <button class="btn btn-sm btn-primary" type="submit">{{ "Add" if lang == "en" else "যোগ করুন"
+                  }}</button>
               </form>
             </div>
           </div>
@@ -408,20 +427,24 @@
         <!-- Reminder Times -->
         <div class="card section-card mb-4">
           <div class="card-header bg-white py-3">
-            <strong><i class="bi bi-clock-fill"></i> {{ "Reminder Times" if lang == "en" else "রিমাইন্ডারের সময়" }}</strong>
+            <strong><i class="bi bi-clock-fill"></i> {{ "Reminder Times" if lang == "en" else "রিমাইন্ডারের সময়"
+              }}</strong>
           </div>
           <div class="card-body">
             <form method="POST" action="/settings/save">
               <div class="mb-3">
-                <label class="form-label small fw-bold" style="color:var(--shokal)">🌅 {{ "Morning" if lang == "en" else "সকাল" }}</label>
+                <label class="form-label small fw-bold" style="color:var(--shokal)">🌅 {{ "Morning" if lang == "en" else
+                  "সকাল" }}</label>
                 <input type="time" class="form-control" name="shokal_time" value="{{ settings.shokal_time }}" required>
               </div>
               <div class="mb-3">
-                <label class="form-label small fw-bold" style="color:var(--dupur)">☀️ {{ "Noon" if lang == "en" else "দুপুর" }}</label>
+                <label class="form-label small fw-bold" style="color:var(--dupur)">☀️ {{ "Noon" if lang == "en" else
+                  "দুপুর" }}</label>
                 <input type="time" class="form-control" name="dupur_time" value="{{ settings.dupur_time }}" required>
               </div>
               <div class="mb-3">
-                <label class="form-label small fw-bold" style="color:var(--rater)">🌙 {{ "Night" if lang == "en" else "রাত" }}</label>
+                <label class="form-label small fw-bold" style="color:var(--rater)">🌙 {{ "Night" if lang == "en" else
+                  "রাত" }}</label>
                 <input type="time" class="form-control" name="rater_time" value="{{ settings.rater_time }}" required>
               </div>
               <button class="btn btn-primary w-100" type="submit">
@@ -434,7 +457,8 @@
         <!-- Reminders (follow-up, etc.) -->
         <div class="card section-card mb-4" style="border-top:4px solid #e74c3c">
           <div class="card-header bg-white py-3">
-            <strong><i class="bi bi-bell-fill text-danger"></i> {{ "Reminders" if lang == "en" else "রিমাইন্ডার" }}</strong>
+            <strong><i class="bi bi-bell-fill text-danger"></i> {{ "Reminders" if lang == "en" else "রিমাইন্ডার"
+              }}</strong>
           </div>
           <div class="card-body p-0">
             <ul class="list-group list-group-flush">
@@ -450,12 +474,14 @@
                   <br><span class="badge bg-success">{{ "Pending" if lang == "en" else "অপেক্ষমান" }}</span>
                   {% endif %}
                 </div>
-                <form method="POST" action="/reminder/delete/{{ rem.id }}" onsubmit="return confirm('{{ 'Delete?' if lang == 'en' else 'মুছবেন?' }}')">
+                <form method="POST" action="/reminder/delete/{{ rem.id }}"
+                  onsubmit="return confirm('{{ 'Delete?' if lang == 'en' else 'মুছবেন?' }}')">
                   <button class="btn btn-sm btn-outline-danger"><i class="bi bi-trash"></i></button>
                 </form>
               </li>
               {% else %}
-              <li class="list-group-item text-center text-muted">{{ "No reminders" if lang == "en" else "কোনো রিমাইন্ডার নেই" }}</li>
+              <li class="list-group-item text-center text-muted">{{ "No reminders" if lang == "en" else "কোনো রিমাইন্ডার
+                নেই" }}</li>
               {% endfor %}
             </ul>
           </div>
@@ -466,16 +492,19 @@
             <div class="collapse mt-3" id="addReminder">
               <form method="POST" action="/reminder/add">
                 <div class="mb-2">
-                  <input class="form-control form-control-sm" name="title" placeholder="{{ 'Title (e.g. Follow-up)' if lang == 'en' else 'শিরোনাম (যেমন: ফলো-আপ)' }}" required>
+                  <input class="form-control form-control-sm" name="title"
+                    placeholder="{{ 'Title (e.g. Follow-up)' if lang == 'en' else 'শিরোনাম (যেমন: ফলো-আপ)' }}" required>
                 </div>
                 <div class="mb-2">
-                  <input class="form-control form-control-sm" name="message" placeholder="{{ 'Message' if lang == 'en' else 'বার্তা' }}" required>
+                  <input class="form-control form-control-sm" name="message"
+                    placeholder="{{ 'Message' if lang == 'en' else 'বার্তা' }}" required>
                 </div>
                 <div class="mb-2">
                   <label class="form-label small">{{ "Remind Date" if lang == "en" else "তারিখ" }}</label>
                   <input type="date" class="form-control form-control-sm" name="remind_date" required>
                 </div>
-                <button class="btn btn-sm btn-primary" type="submit">{{ "Add" if lang == "en" else "যোগ করুন" }}</button>
+                <button class="btn btn-sm btn-primary" type="submit">{{ "Add" if lang == "en" else "যোগ করুন"
+                  }}</button>
               </form>
             </div>
           </div>
@@ -484,13 +513,16 @@
         <!-- Telegram setup tip -->
         <div class="card section-card border-primary">
           <div class="card-header bg-primary bg-opacity-10 py-3">
-            <strong><i class="bi bi-telegram"></i> {{ "How to join on Telegram?" if lang == "en" else "Telegram এ কীভাবে যোগ হবেন?" }}</strong>
+            <strong><i class="bi bi-telegram"></i> {{ "How to join on Telegram?" if lang == "en" else "Telegram এ কীভাবে
+              যোগ হবেন?" }}</strong>
           </div>
           <div class="card-body small text-muted">
             <ol class="ps-3 mb-0">
               <li>{{ "Search your bot on Telegram." if lang == "en" else "Telegram-এ আপনার বট খুঁজুন।" }}</li>
-              <li>{% if lang == "en" %}Send <strong>/start</strong> for auto-registration. ✅{% else %}<strong>/start</strong> পাঠান — স্বয়ংক্রিয় তালিকায় যোগ হবে। ✅{% endif %}</li>
-              <li>{{ "Or add manually with Chat ID from the recipients panel." if lang == "en" else "অথবা ম্যানুয়ালি Chat ID দিয়ে \"প্রাপক যোগ করুন\" করুন।" }}</li>
+              <li>{% if lang == "en" %}Send <strong>/start</strong> for auto-registration. ✅{% else
+                %}<strong>/start</strong> পাঠান — স্বয়ংক্রিয় তালিকায় যোগ হবে। ✅{% endif %}</li>
+              <li>{{ "Or add manually with Chat ID from the recipients panel." if lang == "en" else "অথবা ম্যানুয়ালি
+                Chat ID দিয়ে \"প্রাপক যোগ করুন\" করুন।" }}</li>
             </ol>
           </div>
         </div>

@@ -47,9 +47,9 @@ medicines = [
     ("Iracet 500mg", "ইরাসেট ৫০০", "১টা", "shokal", "por", "চলবে", START, None, None),
     ("Iracet 500mg", "ইরাসেট ৫০০", "১টা", "rater",  "por", "চলবে", START, None, None),
 
-    # 7. Thyrox 50mcg + Thyrox 25mcg — (1+0+0), BEFORE meal (empty stomach), ongoing
-    ("Thyrox 50mcg", "থাইরক্স ৫০", "১টা", "shokal", "age", "খালি পেটে", START, None, None),
-    ("Thyrox 25mcg", "থাইরক্স ২৫", "১টা", "shokal", "age", "খালি পেটে", START, None, None),
+    # 7. Thyrox 50mg + Thyrox 25mcg — (1+0+0), BEFORE meal (empty stomach), ongoing
+    ("Thyrox 50mg", "থাইরক্স ৫০", "১টা", "shokal", "age", "খালি পেটে", START, None, None),
+    ("Thyrox 25mg", "থাইরক্স ২৫", "১টা", "shokal", "age", "খালি পেটে", START, None, None),
 
     # 8. Arlin 400mg — 1+0+1, after meal, until 2026-03-13
     ("Arlin 400mg", "আরলিন ৪০০", "১টা", "shokal", "por", "", START, "2026-03-13", None),
