@@ -317,9 +317,17 @@ def test_send(sess):
         return jsonify({"error": "invalid session"}), 400
 
     medicines  = db.get_medicines_for_session(sess)
-    recipients = db.get_active_recipients()
-    results    = telegram_bot.broadcast_reminder(sess, medicines, recipients)
-    flash(tr("test_sent", count=len(results)), "info")
+
+    # Send to Telegram recipients
+    tg_recipients = db.get_active_recipients(platform="telegram")
+    tg_results    = telegram_bot.broadcast_reminder(sess, medicines, tg_recipients)
+
+    # Send to Messenger recipients
+    fb_recipients = db.get_active_recipients(platform="messenger")
+    fb_results    = messenger_bot.broadcast_reminder(sess, medicines, fb_recipients)
+
+    total = len(tg_results) + len(fb_results)
+    flash(tr("test_sent", count=total), "info")
     return redirect(url_for("dashboard"))
 
 
