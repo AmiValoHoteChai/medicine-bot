@@ -48,7 +48,7 @@ def build_bangla_message(session: str, medicines: list) -> str:
         lines.append("🍽️ খাওয়ার আগে")
         lines.append("")
         for i, m in enumerate(age_meds, 1):
-            display = m["name_bn"] if m.get("name_bn") else m["name"]
+            display = m["name"] if m.get("name") else m["name_bn"]
             dose    = m.get("effective_dose") or m.get("dose", "১টা")
             lines.append(f"{i}. {display}  ·  {dose}")
             if m.get("note"):
@@ -62,7 +62,7 @@ def build_bangla_message(session: str, medicines: list) -> str:
         lines.append("✅ খাওয়ার পরে")
         lines.append("")
         for i, m in enumerate(por_meds, 1):
-            display = m["name_bn"] if m.get("name_bn") else m["name"]
+            display = m["name"] if m.get("name") else m["name_bn"]
             dose    = m.get("effective_dose") or m.get("dose", "১টা")
             lines.append(f"{i}. {display}  ·  {dose}")
             if m.get("note"):
