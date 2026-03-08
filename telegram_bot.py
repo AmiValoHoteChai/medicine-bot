@@ -53,7 +53,7 @@ def build_bangla_message(session: str, medicines: list) -> str:
             lines.append(f"{i}. {display}  ·  {dose}")
             if m.get("note"):
                 lines.append(f"   ⚠️ {m['note']}")
-        lines.append("")
+            lines.append("")
 
     if age_meds and por_meds:
         lines.append("━━━━━━━━━━━━━━━━━━")
