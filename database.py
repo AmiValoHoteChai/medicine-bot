@@ -23,6 +23,7 @@ def init_db():
                 name     TEXT    NOT NULL,
                 chat_id  TEXT    NOT NULL UNIQUE,
                 active   INTEGER NOT NULL DEFAULT 1,
+                platform TEXT    NOT NULL DEFAULT 'telegram',
                 added_at TEXT    DEFAULT (datetime('now','+6 hours'))
             )
         """)
@@ -52,6 +53,11 @@ def init_db():
             c.execute("ALTER TABLE medicines ADD COLUMN end_date TEXT")
         if "dose_plan" not in cols:
             c.execute("ALTER TABLE medicines ADD COLUMN dose_plan TEXT")
+
+        # Migration: add platform column to recipients
+        rcols = {row[1] for row in c.execute("PRAGMA table_info(recipients)").fetchall()}
+        if "platform" not in rcols:
+            c.execute("ALTER TABLE recipients ADD COLUMN platform TEXT NOT NULL DEFAULT 'telegram'")
 
         # Settings — store reminder times
         c.execute("""
@@ -225,10 +231,10 @@ def get_all_recipients():
         return [dict(r) for r in rows]
 
 
-def add_recipient(name, chat_id):
+def add_recipient(name, chat_id, platform="telegram"):
     with get_db() as conn:
         try:
-            conn.execute("INSERT INTO recipients(name,chat_id) VALUES(?,?)", (name, chat_id))
+            conn.execute("INSERT INTO recipients(name,chat_id,platform) VALUES(?,?,?)", (name, chat_id, platform))
             conn.commit()
             return True
         except sqlite3.IntegrityError:
@@ -247,9 +253,12 @@ def delete_recipient(rec_id):
         conn.commit()
 
 
-def get_active_recipients():
+def get_active_recipients(platform=None):
     with get_db() as conn:
-        rows = conn.execute("SELECT * FROM recipients WHERE active=1").fetchall()
+        if platform:
+            rows = conn.execute("SELECT * FROM recipients WHERE active=1 AND platform=?", (platform,)).fetchall()
+        else:
+            rows = conn.execute("SELECT * FROM recipients WHERE active=1").fetchall()
         return [dict(r) for r in rows]
 
 

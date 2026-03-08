@@ -15,6 +15,12 @@ TELEGRAM_BOT_TOKEN = os.environ.get("TELEGRAM_BOT_TOKEN", "")
 TELEGRAM_API_BASE  = f"https://api.telegram.org/bot{TELEGRAM_BOT_TOKEN}"
 
 # ─────────────────────────────────────────────
+#  Facebook Messenger API
+# ─────────────────────────────────────────────
+FB_PAGE_ACCESS_TOKEN = os.environ.get("FB_PAGE_ACCESS_TOKEN", "")
+FB_VERIFY_TOKEN      = os.environ.get("FB_VERIFY_TOKEN", "")
+
+# ─────────────────────────────────────────────
 #  Daily Reminder Times  (24-hr, Asia/Dhaka)
 # ─────────────────────────────────────────────
 SHOKAL_TIME = os.environ.get("SHOKAL_TIME", "08:00")   # সকাল

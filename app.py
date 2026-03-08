@@ -7,6 +7,7 @@ from functools import wraps
 import config
 import database as db
 import telegram_bot
+import messenger_bot
 import scheduler as sched
 
 # ─────────────────────────────────────────────
@@ -374,6 +375,72 @@ def telegram_webhook():
             )
     except Exception as e:
         logging.error(f"[Telegram Webhook] Error: {e}")
+
+    return "OK", 200
+
+
+# ═══════════════════════════════════════════════════════
+#  MESSENGER WEBHOOK
+# ═══════════════════════════════════════════════════════
+
+@app.route("/messenger/webhook", methods=["GET"])
+def messenger_verify():
+    """Facebook webhook verification (GET request)."""
+    mode      = request.args.get("hub.mode")
+    token     = request.args.get("hub.verify_token")
+    challenge = request.args.get("hub.challenge")
+
+    if mode == "subscribe" and token == config.FB_VERIFY_TOKEN:
+        logging.info("[Messenger] Webhook verified!")
+        return challenge, 200
+    else:
+        logging.warning("[Messenger] Webhook verification failed.")
+        return "Forbidden", 403
+
+
+@app.route("/messenger/webhook", methods=["POST"])
+def messenger_webhook():
+    """
+    Receive Messenger messages.
+    When someone sends a message, auto-register them as a recipient.
+    """
+    data = request.get_json(silent=True)
+    if not data or data.get("object") != "page":
+        return "OK", 200
+
+    try:
+        for entry in data.get("entry", []):
+            for event in entry.get("messaging", []):
+                sender_id = event["sender"]["id"]
+                message   = event.get("message", {})
+                text      = message.get("text", "").strip()
+
+                logging.info(f"[Messenger] Message from {sender_id}: {text}")
+
+                if text.lower() in ("start", "/start", "hi", "hello", "হাই"):
+                    if not db.recipient_exists(sender_id):
+                        db.add_recipient(f"FB_{sender_id}", sender_id, platform="messenger")
+                        messenger_bot.send_plain_message(
+                            sender_id,
+                            "আস্সালামু আলাইকুম! 👋\n"
+                            "আপনি ওষুধের রিমাইন্ডার তালিকায় যোগ হয়েছেন। ✅\n"
+                            "প্রতিদিন সকাল, দুপুর ও রাতে আপনি ওষুধের রিমাইন্ডার পাবেন। 💊"
+                        )
+                    else:
+                        messenger_bot.send_plain_message(
+                            sender_id,
+                            "আপনি ইতিমধ্যে তালিকায় আছেন! ✅\n"
+                            "রিমাইন্ডার আসতে থাকবে। 💊"
+                        )
+                else:
+                    messenger_bot.send_plain_message(
+                        sender_id,
+                        "আস্সালামু আলাইকুম! 👋\n"
+                        "এই বট আপনাকে ওষুধের রিমাইন্ডার পাঠাবে।\n"
+                        '"start" লিখুন তালিকায় যোগ হতে।'
+                    )
+    except Exception as e:
+        logging.error(f"[Messenger Webhook] Error: {e}")
 
     return "OK", 200
 
