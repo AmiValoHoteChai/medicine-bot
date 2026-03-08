@@ -148,6 +148,7 @@ def dashboard():
     medicines  = db.get_all_medicines()
     recipients = db.get_all_recipients()
     settings   = db.get_settings()
+    reminders  = db.get_all_reminders()
 
     grouped = {"shokal": [], "dupur": [], "rater": []}
     for m in medicines:
@@ -159,6 +160,7 @@ def dashboard():
         recipients=recipients,
         settings=settings,
         medicines=medicines,
+        reminders=reminders,
     )
 
 
@@ -383,6 +385,37 @@ def telegram_webhook():
 @app.route("/health")
 def health():
     return jsonify({"status": "ok"}), 200
+
+
+# ═══════════════════════════════════════════════════════
+#  REMINDERS
+# ═══════════════════════════════════════════════════════
+
+@app.route("/reminder/add", methods=["POST"])
+@login_required
+def add_reminder():
+    title   = request.form.get("title", "").strip()
+    message = request.form.get("message", "").strip()
+    remind_date = request.form.get("remind_date", "").strip()
+
+    if not title or not message or not remind_date:
+        flash(tr("fill_all_fields"), "danger")
+        return redirect(url_for("dashboard"))
+    if not _valid_date_ymd(remind_date):
+        flash(tr("invalid_schedule_dates"), "danger")
+        return redirect(url_for("dashboard"))
+
+    db.add_reminder(title, message, remind_date)
+    flash("✅ রিমাইন্ডার যোগ হয়েছে।" if current_lang() == "bn" else "✅ Reminder added.", "success")
+    return redirect(url_for("dashboard"))
+
+
+@app.route("/reminder/delete/<int:rem_id>", methods=["POST"])
+@login_required
+def delete_reminder(rem_id):
+    db.delete_reminder(rem_id)
+    flash("রিমাইন্ডার মুছে ফেলা হয়েছে।" if current_lang() == "bn" else "Reminder deleted.", "info")
+    return redirect(url_for("dashboard"))
 
 
 # ─────────────────────────────────────────────

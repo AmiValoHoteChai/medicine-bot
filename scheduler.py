@@ -28,6 +28,28 @@ def _fire_reminder(session: str):
         logger.info(f"  → {r['name']}: {r['result']}")
 
 
+def _check_reminders():
+    """Check and send any pending date-based reminders (e.g. follow-up)."""
+    import pytz
+    from datetime import datetime as _dt
+    today_str = _dt.now(pytz.timezone(TIMEZONE)).strftime("%Y-%m-%d")
+    pending = db.get_pending_reminders(today_str)
+    if not pending:
+        return
+
+    recipients = db.get_active_recipients()
+    if not recipients:
+        logger.info("[Reminders] No active recipients, skipping.")
+        return
+
+    for rem in pending:
+        msg = f"🔔 *{rem['title']}*\n\n{rem['message']}"
+        for rec in recipients:
+            telegram_bot.send_plain_message(rec["chat_id"], msg)
+            logger.info(f"[Reminder] Sent '{rem['title']}' → {rec['name']}")
+        db.mark_reminder_sent(rem["id"])
+
+
 def _time_to_hm(t: str):
     """Parse 'HH:MM' → (int hour, int minute)."""
     h, m = t.split(":")
@@ -58,6 +80,13 @@ def start_scheduler():
         lambda: _fire_reminder("rater"),
         CronTrigger(hour=rh, minute=rm),
         id="rater", replace_existing=True
+    )
+
+    # Daily reminder checker at 07:00 AM (before medicine reminders)
+    _scheduler.add_job(
+        _check_reminders,
+        CronTrigger(hour=7, minute=0),
+        id="reminder_check", replace_existing=True
     )
 
     _scheduler.start()

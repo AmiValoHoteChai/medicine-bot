@@ -61,6 +61,17 @@ def init_db():
             )
         """)
 
+        # Reminders — one-off date-based reminders (e.g. follow-up)
+        c.execute("""
+            CREATE TABLE IF NOT EXISTS reminders (
+                id          INTEGER PRIMARY KEY AUTOINCREMENT,
+                title       TEXT NOT NULL,
+                message     TEXT NOT NULL,
+                remind_date TEXT NOT NULL,
+                sent        INTEGER NOT NULL DEFAULT 0
+            )
+        """)
+
         # Seed default reminder times if not present
         for key, val in [("shokal_time","08:00"),("dupur_time","14:00"),("rater_time","21:00")]:
             c.execute("INSERT OR IGNORE INTO settings(key,value) VALUES(?,?)", (key, val))
@@ -260,4 +271,43 @@ def save_settings(shokal, dupur, rater):
     with get_db() as conn:
         for key, val in [("shokal_time", shokal), ("dupur_time", dupur), ("rater_time", rater)]:
             conn.execute("UPDATE settings SET value=? WHERE key=?", (val, key))
+        conn.commit()
+
+
+# ── Reminders ────────────────────────────────
+
+def add_reminder(title, message, remind_date):
+    with get_db() as conn:
+        conn.execute(
+            "INSERT INTO reminders(title, message, remind_date) VALUES(?,?,?)",
+            (title, message, remind_date)
+        )
+        conn.commit()
+
+
+def get_all_reminders():
+    with get_db() as conn:
+        rows = conn.execute("SELECT * FROM reminders ORDER BY remind_date").fetchall()
+        return [dict(r) for r in rows]
+
+
+def get_pending_reminders(date_str):
+    """Return unsent reminders whose remind_date <= date_str."""
+    with get_db() as conn:
+        rows = conn.execute(
+            "SELECT * FROM reminders WHERE sent=0 AND remind_date<=? ORDER BY remind_date",
+            (date_str,)
+        ).fetchall()
+        return [dict(r) for r in rows]
+
+
+def mark_reminder_sent(rem_id):
+    with get_db() as conn:
+        conn.execute("UPDATE reminders SET sent=1 WHERE id=?", (rem_id,))
+        conn.commit()
+
+
+def delete_reminder(rem_id):
+    with get_db() as conn:
+        conn.execute("DELETE FROM reminders WHERE id=?", (rem_id,))
         conn.commit()

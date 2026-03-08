@@ -431,6 +431,56 @@
           </div>
         </div>
 
+        <!-- Reminders (follow-up, etc.) -->
+        <div class="card section-card mb-4" style="border-top:4px solid #e74c3c">
+          <div class="card-header bg-white py-3">
+            <strong><i class="bi bi-bell-fill text-danger"></i> {{ "Reminders" if lang == "en" else "রিমাইন্ডার" }}</strong>
+          </div>
+          <div class="card-body p-0">
+            <ul class="list-group list-group-flush">
+              {% for rem in reminders %}
+              <li class="list-group-item d-flex justify-content-between align-items-center">
+                <div>
+                  <strong>{{ rem.title }}</strong>
+                  <br><small class="text-muted">📅 {{ rem.remind_date }}</small>
+                  <br><small>{{ rem.message }}</small>
+                  {% if rem.sent %}
+                  <br><span class="badge bg-secondary">{{ "Sent" if lang == "en" else "পাঠানো হয়েছে" }}</span>
+                  {% else %}
+                  <br><span class="badge bg-success">{{ "Pending" if lang == "en" else "অপেক্ষমান" }}</span>
+                  {% endif %}
+                </div>
+                <form method="POST" action="/reminder/delete/{{ rem.id }}" onsubmit="return confirm('{{ 'Delete?' if lang == 'en' else 'মুছবেন?' }}')">
+                  <button class="btn btn-sm btn-outline-danger"><i class="bi bi-trash"></i></button>
+                </form>
+              </li>
+              {% else %}
+              <li class="list-group-item text-center text-muted">{{ "No reminders" if lang == "en" else "কোনো রিমাইন্ডার নেই" }}</li>
+              {% endfor %}
+            </ul>
+          </div>
+          <div class="card-footer bg-white">
+            <button class="btn btn-sm btn-success" data-bs-toggle="collapse" data-bs-target="#addReminder">
+              <i class="bi bi-plus-circle"></i> {{ "Add Reminder" if lang == "en" else "রিমাইন্ডার যোগ করুন" }}
+            </button>
+            <div class="collapse mt-3" id="addReminder">
+              <form method="POST" action="/reminder/add">
+                <div class="mb-2">
+                  <input class="form-control form-control-sm" name="title" placeholder="{{ 'Title (e.g. Follow-up)' if lang == 'en' else 'শিরোনাম (যেমন: ফলো-আপ)' }}" required>
+                </div>
+                <div class="mb-2">
+                  <input class="form-control form-control-sm" name="message" placeholder="{{ 'Message' if lang == 'en' else 'বার্তা' }}" required>
+                </div>
+                <div class="mb-2">
+                  <label class="form-label small">{{ "Remind Date" if lang == "en" else "তারিখ" }}</label>
+                  <input type="date" class="form-control form-control-sm" name="remind_date" required>
+                </div>
+                <button class="btn btn-sm btn-primary" type="submit">{{ "Add" if lang == "en" else "যোগ করুন" }}</button>
+              </form>
+            </div>
+          </div>
+        </div>
+
         <!-- Telegram setup tip -->
         <div class="card section-card border-primary">
           <div class="card-header bg-primary bg-opacity-10 py-3">
