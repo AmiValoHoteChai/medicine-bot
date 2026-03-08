@@ -30,7 +30,7 @@ def _dhaka_time() -> str:
 def build_bangla_message(session: str, medicines: list) -> str:
     """
     One message per session showing BOTH খাওয়ার আগে and খাওয়ার পরে.
-    Uses Telegram Markdown formatting.
+    Uses numbered list format with clean section dividers.
     """
     icon, label = SESSION_INFO.get(session, ("💊", "ওষুধ"))
     now_str     = _dhaka_time()
@@ -39,35 +39,42 @@ def build_bangla_message(session: str, medicines: list) -> str:
     por_meds = [m for m in medicines if m["timing"] == "por"]
 
     lines = [
-        f"{icon} *{label}ের সময় হয়েছে\\!* \\({now_str}\\)",
-        "━━━━━━━━━━━━━━━━━━━━━━",
+        f"💊 {label} — {now_str}",
+        "",
+        "━━━━━━━━━━━━━━━━━━",
     ]
 
     if age_meds:
-        lines.append("🍽️ *খাওয়ার আগে:*")
-        for m in age_meds:
+        lines.append("🍽️ খাওয়ার আগে")
+        lines.append("")
+        for i, m in enumerate(age_meds, 1):
             display = m["name_bn"] if m.get("name_bn") else m["name"]
             dose    = m.get("effective_dose") or m.get("dose", "১টা")
-            note    = f"  _{m['note']}_" if m.get("note") else ""
-            lines.append(f"   • {display} — {dose}{note}")
-
-    if age_meds and por_meds:
+            lines.append(f"{i}. {display}  ·  {dose}")
+            if m.get("note"):
+                lines.append(f"   ⚠️ {m['note']}")
         lines.append("")
 
+    if age_meds and por_meds:
+        lines.append("━━━━━━━━━━━━━━━━━━")
+
     if por_meds:
-        lines.append("✅ *খাওয়ার পরে:*")
-        for m in por_meds:
+        lines.append("✅ খাওয়ার পরে")
+        lines.append("")
+        for i, m in enumerate(por_meds, 1):
             display = m["name_bn"] if m.get("name_bn") else m["name"]
             dose    = m.get("effective_dose") or m.get("dose", "১টা")
-            note    = f"  _{m['note']}_" if m.get("note") else ""
-            lines.append(f"   • {display} — {dose}{note}")
+            lines.append(f"{i}. {display}  ·  {dose}")
+            if m.get("note"):
+                lines.append(f"   ⚠️ {m['note']}")
+            lines.append("")
 
-    lines.append("━━━━━━━━━━━━━━━━━━━━━━")
+    lines.append("━━━━━━━━━━━━━━━━━━")
 
     if not age_meds and not por_meds:
         lines.append("আজকের জন্য কোনো ওষুধ নেই।")
     else:
-        lines.append("সুস্থ থাকুন\\! 💊")
+        lines.append("🤲 সুস্থ থাকুন!")
 
     return "\n".join(lines)
 
@@ -132,7 +139,7 @@ def broadcast_reminder(session: str, medicines: list, recipients: list) -> list:
     results = []
 
     for rec in recipients:
-        result = send_text_message(rec["chat_id"], message)
+        result = send_plain_message(rec["chat_id"], message)
         status = "✅ sent" if result.get("ok") else f"❌ {result}"
         logger.info(f"[Broadcast] {rec['name']} ({rec['chat_id']}) → {status}")
         results.append({"name": rec["name"], "chat_id": rec["chat_id"], "result": result})
