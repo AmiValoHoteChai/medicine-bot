@@ -7,7 +7,7 @@ Type=simple
 User=ubuntu
 WorkingDirectory=/home/ubuntu/medicine-bot
 EnvironmentFile=/home/ubuntu/medicine-bot/.env
-ExecStart=/home/ubuntu/medicine-bot/venv/bin/gunicorn -w 1 -b 0.0.0.0:5000 app:app
+ExecStart=/home/ubuntu/medicine-bot/venv/bin/gunicorn --timeout 120 --preload -w 1 -b 0.0.0.0:5000 app:app
 Restart=always
 RestartSec=5
 

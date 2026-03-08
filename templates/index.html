@@ -227,8 +227,13 @@
                 {% for m in meds %}
                 <tr class="med-row {{ 'inactive' if not m.active }}">
                   <td>
+                    {% if lang == "en" or not m.name_bn %}
                     <strong>{{ m.name }}</strong>
                     {% if m.name_bn %}<br><small class="text-muted">{{ m.name_bn }}</small>{% endif %}
+                    {% else %}
+                    <strong>{{ m.name_bn }}</strong>
+                    <br><small class="text-muted">{{ m.name }}</small>
+                    {% endif %}
                   </td>
                   <td class="hide-sm">{{ m.effective_dose or m.dose }}</td>
                   <td>
