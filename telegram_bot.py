@@ -180,9 +180,15 @@ def _build_list(session, medicines):
             display = m["name"] if m.get("name") else m["name_bn"]
             dose = m.get("effective_dose") or m.get("dose", "১টা")
             lines.append(f"{i}. {display}  ·  {dose}")
+            
             end_label = _format_end_bangla(m.get("end_date"))
-            if end_label:
-                lines.append(f"   {end_label}")
+            note = m.get("note", "").strip()
+            
+            sub = []
+            if end_label: sub.append(end_label)
+            if note: sub.append(f"⚠️ {note}")
+            if sub:
+                lines.append(f"   " + " | ".join(sub))
             lines.append("")
 
     if age_meds and por_meds:
@@ -195,9 +201,15 @@ def _build_list(session, medicines):
             display = m["name"] if m.get("name") else m["name_bn"]
             dose = m.get("effective_dose") or m.get("dose", "১টা")
             lines.append(f"{i}. {display}  ·  {dose}")
+            
             end_label = _format_end_bangla(m.get("end_date"))
-            if end_label:
-                lines.append(f"   {end_label}")
+            note = m.get("note", "").strip()
+            
+            sub = []
+            if end_label: sub.append(end_label)
+            if note: sub.append(f"⚠️ {note}")
+            if sub:
+                lines.append(f"   " + " | ".join(sub))
             lines.append("")
 
     lines.append("━━━━━━━━━━━━━━━━━━")
@@ -232,9 +244,25 @@ def _build_table(session, medicines):
     if not age_meds and not por_meds:
         parts.append("আজকের জন্য কোনো ওষুধ নেই।")
     else:
+        table = _escape_html(_med_table(age_meds))
+        parts.append(f"<pre>{table}</pre>")
+
+    if por_meds:
+        parts.append("✅ <b>খাওয়ার পরে</b>")
+        table = _escape_html(_med_table(por_meds))
+        parts.append(f"<pre>{table}</pre>")
+
+    if not age_meds and not por_meds:
+        parts.append("আজকের জন্য কোনো ওষুধ নেই।")
+    else:
         parts.append("🤲 সুস্থ থাকুন!")
 
     return "\n".join(parts), True  # (message, is_html)
+
+
+def _escape_html(text: str) -> str:
+    """Escape HTML tags for Telegram."""
+    return text.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
 
 
 def _build_card(session, medicines):
@@ -245,21 +273,19 @@ def _build_card(session, medicines):
     age_meds = [m for m in medicines if m["timing"] == "age"]
     por_meds = [m for m in medicines if m["timing"] == "por"]
 
-    lines = [
-        "╔══════════════════════╗",
-        f"   {icon} {label}",
-        f"   ⏰ {now_str}",
-        "╚══════════════════════╝",
-        "",
+    parts = [
+        f"{icon} <b>{label}</b>",
+        f"⏰ {now_str}",
+        ""
     ]
 
     if age_meds:
-        lines.append("🍽️ খাওয়ার আগে")
-        lines.append("┌─────────────────────────┐")
+        parts.append("🍽️ <b>খাওয়ার আগে</b>")
+        block = ["┌─────────────────────────┐"]
         for i, m in enumerate(age_meds, 1):
             display = m["name"] if m.get("name") else m["name_bn"]
             dose = m.get("effective_dose") or m.get("dose", "১টা")
-            lines.append(f"  {i}. {display} — {dose}")
+            block.append(f"  {i}. {display} — {dose}")
             
             end = _short_end(m.get("end_date"))
             note = m.get("note", "").strip()
@@ -268,17 +294,17 @@ def _build_card(session, medicines):
             if end: sub_parts.append(f"End: {end}")
             if note: sub_parts.append(note)
             if sub_parts:
-                lines.append(f"     " + " | ".join(sub_parts))
-        lines.append("└─────────────────────────┘")
-        lines.append("")
+                block.append(f"     " + " | ".join(sub_parts))
+        block.append("└─────────────────────────┘")
+        parts.append(f"<pre>{_escape_html(chr(10).join(block))}</pre>")
 
     if por_meds:
-        lines.append("✅ খাওয়ার পরে")
-        lines.append("┌─────────────────────────┐")
+        parts.append("✅ <b>খাওয়ার পরে</b>")
+        block = ["┌─────────────────────────┐"]
         for i, m in enumerate(por_meds, 1):
             display = m["name"] if m.get("name") else m["name_bn"]
             dose = m.get("effective_dose") or m.get("dose", "১টা")
-            lines.append(f"  {i}. {display} — {dose}")
+            block.append(f"  {i}. {display} — {dose}")
             
             end = _short_end(m.get("end_date"))
             note = m.get("note", "").strip()
@@ -287,16 +313,16 @@ def _build_card(session, medicines):
             if end: sub_parts.append(f"End: {end}")
             if note: sub_parts.append(note)
             if sub_parts:
-                lines.append(f"     " + " | ".join(sub_parts))
-        lines.append("└─────────────────────────┘")
-        lines.append("")
+                block.append(f"     " + " | ".join(sub_parts))
+        block.append("└─────────────────────────┘")
+        parts.append(f"<pre>{_escape_html(chr(10).join(block))}</pre>")
 
     if not age_meds and not por_meds:
-        lines.append("আজকের জন্য কোনো ওষুধ নেই।")
+        parts.append("আজকের জন্য কোনো ওষুধ নেই।")
     else:
-        lines.append("🤲 সুস্থ থাকুন!")
+        parts.append("🤲 সুস্থ থাকুন!")
 
-    return "\n".join(lines), False  # (message, is_html)
+    return "\n".join(parts), True  # (message, is_html)
 
 
 STYLE_BUILDERS = {
