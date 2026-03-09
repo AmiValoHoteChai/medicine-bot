@@ -151,14 +151,14 @@ def _med_table(medicines):
 # ─────────────────────────────────────────────
 
 def _format_end_bangla(end_date_str):
-    """'2026-03-10' → '📅 শেষ: ১০ মার্চ'"""
+    """'2026-03-10' → '• শেষ: ১০ মার্চ'"""
     if not end_date_str:
         return None
     try:
         d = datetime.strptime(end_date_str, "%Y-%m-%d").date()
         day = str(d.day).translate(BANGLA_DIGITS)
         month = BANGLA_MONTHS.get(d.month, "")
-        return f"📅 শেষ: {day} {month}"
+        return f"• শেষ: {day} {month}"
     except ValueError:
         return None
 
