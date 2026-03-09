@@ -195,8 +195,8 @@
         ] %}
         <div class="card section-card session-{{ css }}">
           <div class="card-header bg-white d-flex justify-content-between align-items-center py-3">
-            <span class="session-title">{{ icon }} {{ (label_en if lang == "en" else label_bn) }} {{ "Medicines" if lang
-              == "en" else "ের ওষুধ" }}</span>
+            <span class="session-title">{{ icon }} {{ (label_en ~ " Medicines") if lang == "en" else (label_bn ~ "ের
+              ওষুধ") }}</span>
             <div class="d-flex gap-2 align-items-center">
               <span class="time-badge time-{{ css }}">
                 {{ settings[session+'_time'] }}

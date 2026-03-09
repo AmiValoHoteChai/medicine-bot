@@ -61,7 +61,7 @@ def build_bangla_message(session: str, medicines: list) -> str:
     por_meds = [m for m in medicines if m["timing"] == "por"]
 
     lines = [
-        f"💊 {label} — {now_str}",
+        f"{icon} {label} — {now_str}",
         "",
         "━━━━━━━━━━━━━━━━━━",
     ]
