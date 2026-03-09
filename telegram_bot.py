@@ -78,6 +78,28 @@ def _ascii_table(headers, rows):
     return "\n".join(lines)
 
 
+import re
+
+def _visual_len(text: str) -> int:
+    """Calculate display length, treating Bangla/wide chars as length 2."""
+    length = 0
+    for char in text:
+        # Bengali Unicode Block is 0x0980 to 0x09FF
+        if '\u0980' <= char <= '\u09ff':
+            length += 2
+        # Em-dash, en-dash, bullet
+        elif char in ('—', '–', '·'):
+            length += 2
+        else:
+            length += 1
+    return length
+
+def _pad_r(text: str, width: int) -> str:
+    """Right-pad text with spaces to visual width."""
+    pad_len = width - _visual_len(text)
+    return text + " " * max(0, pad_len)
+
+
 def _med_table(medicines):
     """Build a medicine table for a timing group using multiline rows."""
     headers = ("#", "Medicine (Dose)")
@@ -99,18 +121,18 @@ def _med_table(medicines):
 
         rows.append((str(i), line1, line2))
 
-    # Calculate column widths
+    # Calculate visual column widths
     w0 = 1 # '#' column
-    w1 = len("Medicine (Dose)")
+    w1 = _visual_len("Medicine (Dose)")
     for i, l1, l2 in rows:
-        w1 = max(w1, len(l1))
+        w1 = max(w1, _visual_len(l1))
         if len(l2) > 0:
-            w1 = max(w1, len(l2))
+            w1 = max(w1, _visual_len(l2))
 
     sep = "+" + "-" * (w0 + 2) + "+" + "-" * (w1 + 2) + "+"
 
     def fmt(c0, c1):
-        return f"| {c0.ljust(w0)} | {c1.ljust(w1)} |"
+        return f"| {_pad_r(c0, w0)} | {_pad_r(c1, w1)} |"
 
     lines = [sep, fmt(headers[0], headers[1]), sep]
     
@@ -235,8 +257,6 @@ def _build_card(session, medicines):
         lines.append("🍽️ খাওয়ার আগে")
         lines.append("┌─────────────────────────┐")
         for i, m in enumerate(age_meds, 1):
-            if i > 1:
-                lines.append("├·························┤")
             display = m["name"] if m.get("name") else m["name_bn"]
             dose = m.get("effective_dose") or m.get("dose", "১টা")
             lines.append(f"  {i}. {display} — {dose}")
@@ -256,8 +276,6 @@ def _build_card(session, medicines):
         lines.append("✅ খাওয়ার পরে")
         lines.append("┌─────────────────────────┐")
         for i, m in enumerate(por_meds, 1):
-            if i > 1:
-                lines.append("├·························┤")
             display = m["name"] if m.get("name") else m["name_bn"]
             dose = m.get("effective_dose") or m.get("dose", "১টা")
             lines.append(f"  {i}. {display} — {dose}")
