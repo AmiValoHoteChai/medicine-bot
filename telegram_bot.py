@@ -234,28 +234,42 @@ def _build_card(session, medicines):
     if age_meds:
         lines.append("🍽️ খাওয়ার আগে")
         lines.append("┌─────────────────────────┐")
-        for m in age_meds:
+        for i, m in enumerate(age_meds, 1):
+            if i > 1:
+                lines.append("├·························┤")
             display = m["name"] if m.get("name") else m["name_bn"]
             dose = m.get("effective_dose") or m.get("dose", "১টা")
+            lines.append(f"  {i}. {display} — {dose}")
+            
             end = _short_end(m.get("end_date"))
-            line = f"  💊 {display} — {dose}"
-            if end:
-                line += f" ({end})"
-            lines.append(line)
+            note = m.get("note", "").strip()
+            
+            sub_parts = []
+            if end: sub_parts.append(f"End: {end}")
+            if note: sub_parts.append(note)
+            if sub_parts:
+                lines.append(f"     " + " | ".join(sub_parts))
         lines.append("└─────────────────────────┘")
         lines.append("")
 
     if por_meds:
         lines.append("✅ খাওয়ার পরে")
         lines.append("┌─────────────────────────┐")
-        for m in por_meds:
+        for i, m in enumerate(por_meds, 1):
+            if i > 1:
+                lines.append("├·························┤")
             display = m["name"] if m.get("name") else m["name_bn"]
             dose = m.get("effective_dose") or m.get("dose", "১টা")
+            lines.append(f"  {i}. {display} — {dose}")
+            
             end = _short_end(m.get("end_date"))
-            line = f"  💊 {display} — {dose}"
-            if end:
-                line += f" ({end})"
-            lines.append(line)
+            note = m.get("note", "").strip()
+            
+            sub_parts = []
+            if end: sub_parts.append(f"End: {end}")
+            if note: sub_parts.append(note)
+            if sub_parts:
+                lines.append(f"     " + " | ".join(sub_parts))
         lines.append("└─────────────────────────┘")
         lines.append("")
 
