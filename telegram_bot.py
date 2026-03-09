@@ -78,28 +78,6 @@ def _ascii_table(headers, rows):
     return "\n".join(lines)
 
 
-import re
-
-def _visual_len(text: str) -> int:
-    """Calculate display length, treating Bangla/wide chars as length 2."""
-    length = 0
-    for char in text:
-        # Bengali Unicode Block is 0x0980 to 0x09FF
-        if '\u0980' <= char <= '\u09ff':
-            length += 2
-        # Em-dash, en-dash, bullet
-        elif char in ('—', '–', '·'):
-            length += 2
-        else:
-            length += 1
-    return length
-
-def _pad_r(text: str, width: int) -> str:
-    """Right-pad text with spaces to visual width."""
-    pad_len = width - _visual_len(text)
-    return text + " " * max(0, pad_len)
-
-
 def _med_table(medicines):
     """Build a medicine table for a timing group using multiline rows."""
     headers = ("#", "Medicine (Dose)")
@@ -121,18 +99,18 @@ def _med_table(medicines):
 
         rows.append((str(i), line1, line2))
 
-    # Calculate visual column widths
+    # Calculate column widths
     w0 = 1 # '#' column
-    w1 = _visual_len("Medicine (Dose)")
+    w1 = len("Medicine (Dose)")
     for i, l1, l2 in rows:
-        w1 = max(w1, _visual_len(l1))
+        w1 = max(w1, len(l1))
         if len(l2) > 0:
-            w1 = max(w1, _visual_len(l2))
+            w1 = max(w1, len(l2))
 
     sep = "+" + "-" * (w0 + 2) + "+" + "-" * (w1 + 2) + "+"
 
     def fmt(c0, c1):
-        return f"| {_pad_r(c0, w0)} | {_pad_r(c1, w1)} |"
+        return f"| {c0.ljust(w0)} | {c1.ljust(w1)} |"
 
     lines = [sep, fmt(headers[0], headers[1]), sep]
     
@@ -233,17 +211,6 @@ def _build_table(session, medicines):
 
     if age_meds:
         parts.append("🍽️ <b>খাওয়ার আগে</b>")
-        table = html_lib.escape(_med_table(age_meds))
-        parts.append(f"<pre>{table}</pre>")
-
-    if por_meds:
-        parts.append("✅ <b>খাওয়ার পরে</b>")
-        table = html_lib.escape(_med_table(por_meds))
-        parts.append(f"<pre>{table}</pre>")
-
-    if not age_meds and not por_meds:
-        parts.append("আজকের জন্য কোনো ওষুধ নেই।")
-    else:
         table = _escape_html(_med_table(age_meds))
         parts.append(f"<pre>{table}</pre>")
 
@@ -258,7 +225,6 @@ def _build_table(session, medicines):
         parts.append("🤲 সুস্থ থাকুন!")
 
     return "\n".join(parts), True  # (message, is_html)
-
 
 def _escape_html(text: str) -> str:
     """Escape HTML tags for Telegram."""
