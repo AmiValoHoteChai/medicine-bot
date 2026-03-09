@@ -173,7 +173,7 @@ def dashboard():
 def add_medicine():
     name    = request.form.get("name", "").strip()
     name_bn = request.form.get("name_bn", "").strip()
-    dose    = request.form.get("dose", "১টা").strip()
+    dose    = request.form.get("dose", "1").strip()
     sess    = request.form.get("session")
     timing  = request.form.get("timing")
     note    = request.form.get("note", "").strip()
@@ -239,7 +239,7 @@ def edit_medicine(med_id):
         med_id,
         request.form.get("name","").strip(),
         request.form.get("name_bn","").strip(),
-        request.form.get("dose","১টা").strip(),
+        request.form.get("dose","1").strip(),
         request.form.get("session"),
         request.form.get("timing"),
         request.form.get("note","").strip(),

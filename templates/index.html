@@ -151,7 +151,7 @@
     </div>
     <div class="col-12">
       <label class="form-label small">নোট</label>
-      <input class="form-control" name="note" value="{{ m.note or '' }}" placeholder="ঐচ্ছিক">
+      <input class="form-control" name="note" value="{{ m.note or '' }}" placeholder="নোট (শুধুমাত্র ইংরেজি)">
     </div>
   </div>
   {% endmacro %}
@@ -336,7 +336,7 @@
                   </div>
                   <div class="col-sm-4">
                     <input class="form-control form-control-sm" name="note"
-                      placeholder="{{ 'Note (optional)' if lang == 'en' else 'নোট (ঐচ্ছিক)' }}">
+                      placeholder="{{ 'Note (English only)' if lang == 'en' else 'নোট (শুধুমাত্র ইংরেজি)' }}">
                   </div>
                   <div class="col-sm-4">
                     <label class="form-label small">{{ "Start Date" if lang == "en" else "শুরুর তারিখ" }}</label>

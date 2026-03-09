@@ -34,7 +34,7 @@ def init_db():
                 id      INTEGER PRIMARY KEY AUTOINCREMENT,
                 name    TEXT    NOT NULL,
                 name_bn TEXT,
-                dose    TEXT    NOT NULL DEFAULT '১টা',
+                dose    TEXT    NOT NULL DEFAULT '1',
                 session TEXT    NOT NULL CHECK(session IN ('shokal','dupur','rater')),
                 timing  TEXT    NOT NULL CHECK(timing  IN ('age','por')),
                 active  INTEGER NOT NULL DEFAULT 1,
@@ -141,10 +141,10 @@ def _effective_dose_for_today(med: dict):
 
     plan = _parse_dose_plan(med.get("dose_plan") or "")
     if not plan:
-        return med.get("dose", "১টা"), "active"
+        return med.get("dose", "1"), "active"
 
     if not start:
-        return med.get("dose", "১টা"), "active"
+        return med.get("dose", "1"), "active"
 
     day_index = (today - start).days + 1
     if day_index < 1:
