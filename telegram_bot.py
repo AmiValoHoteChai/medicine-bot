@@ -48,7 +48,7 @@ def _short_end(end_date_str):
         return ""
 
 
-def _build_table(headers, rows):
+def _ascii_table(headers, rows):
     """Build an ASCII table like SQLite output."""
     widths = [len(h) for h in headers]
     for row in rows:
@@ -76,7 +76,8 @@ def _med_table(medicines):
         dose = m.get("effective_dose") or m.get("dose", "")
         end  = _short_end(m.get("end_date")) or "—"
         rows.append((str(i), name, dose, end))
-    return _build_table(headers, rows)
+    return _ascii_table(headers, rows)
+
 
 
 # ─────────────────────────────────────────────
