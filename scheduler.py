@@ -4,7 +4,6 @@ from apscheduler.triggers.cron import CronTrigger
 
 import database as db
 import telegram_bot
-import messenger_bot
 from config import TIMEZONE
 
 logger = logging.getLogger(__name__)
@@ -21,18 +20,11 @@ def _fire_reminder(session: str):
         return
 
     # Telegram recipients
-    tg_recipients = db.get_active_recipients(platform="telegram")
+    tg_recipients = db.get_active_recipients()
     if tg_recipients:
         results = telegram_bot.broadcast_reminder(session, medicines, tg_recipients)
         for r in results:
             logger.info(f"  → [TG] {r['name']}: {r['result']}")
-
-    # Messenger recipients
-    fb_recipients = db.get_active_recipients(platform="messenger")
-    if fb_recipients:
-        results = messenger_bot.broadcast_reminder(session, medicines, fb_recipients)
-        for r in results:
-            logger.info(f"  → [FB] {r['name']}: {r['result']}")
 
 
 def _check_reminders():
@@ -52,10 +44,7 @@ def _check_reminders():
     for rem in pending:
         msg = f"🔔 *{rem['title']}*\n\n{rem['message']}"
         for rec in recipients:
-            if rec.get("platform") == "messenger":
-                messenger_bot.send_plain_message(rec["chat_id"], msg)
-            else:
-                telegram_bot.send_plain_message(rec["chat_id"], msg)
+            telegram_bot.send_plain_message(rec["chat_id"], msg)
             logger.info(f"[Reminder] Sent '{rem['title']}' → {rec['name']}")
         db.mark_reminder_sent(rem["id"])
 

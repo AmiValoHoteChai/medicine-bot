@@ -32,7 +32,7 @@ def _dhaka_time() -> str:
     return now.strftime("%I:%M %p")
 
 
-def _format_end_date(end_date_str: str | None) -> str | None:
+def _format_end_date(end_date_str):
     """Convert '2026-03-10' → '📅 শেষ: ১০ মার্চ'"""
     if not end_date_str:
         return None
