@@ -19,10 +19,13 @@ def _fire_reminder(session: str):
         logger.info(f"[Scheduler] No active medicines for {session}, skipping.")
         return
 
+    settings = db.get_settings()
+    style = settings.get("message_style", "table")
+
     # Telegram recipients
     tg_recipients = db.get_active_recipients()
     if tg_recipients:
-        results = telegram_bot.broadcast_reminder(session, medicines, tg_recipients)
+        results = telegram_bot.broadcast_reminder(session, medicines, tg_recipients, style)
         for r in results:
             logger.info(f"  → [TG] {r['name']}: {r['result']}")
 

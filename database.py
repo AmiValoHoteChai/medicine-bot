@@ -79,7 +79,7 @@ def init_db():
         """)
 
         # Seed default reminder times if not present
-        for key, val in [("shokal_time","08:00"),("dupur_time","14:00"),("rater_time","21:00")]:
+        for key, val in [("shokal_time","08:00"),("dupur_time","14:00"),("rater_time","21:00"),("message_style","table")]:
             c.execute("INSERT OR IGNORE INTO settings(key,value) VALUES(?,?)", (key, val))
 
         conn.commit()
@@ -276,10 +276,10 @@ def get_settings():
         return {r["key"]: r["value"] for r in rows}
 
 
-def save_settings(shokal, dupur, rater):
+def save_settings(shokal, dupur, rater, message_style="table"):
     with get_db() as conn:
-        for key, val in [("shokal_time", shokal), ("dupur_time", dupur), ("rater_time", rater)]:
-            conn.execute("UPDATE settings SET value=? WHERE key=?", (val, key))
+        for key, val in [("shokal_time", shokal), ("dupur_time", dupur), ("rater_time", rater), ("message_style", message_style)]:
+            conn.execute("INSERT INTO settings(key,value) VALUES(?,?) ON CONFLICT(key) DO UPDATE SET value=?", (key, val, val))
         conn.commit()
 
 

@@ -298,8 +298,9 @@ def save_settings():
     shokal = request.form.get("shokal_time","08:00")
     dupur  = request.form.get("dupur_time","14:00")
     rater  = request.form.get("rater_time","21:00")
+    style  = request.form.get("message_style","table")
 
-    db.save_settings(shokal, dupur, rater)
+    db.save_settings(shokal, dupur, rater, style)
     sched.reschedule({"shokal_time": shokal, "dupur_time": dupur, "rater_time": rater})
     flash(tr("settings_updated"), "success")
     return redirect(url_for("dashboard"))
@@ -316,10 +317,12 @@ def test_send(sess):
         return jsonify({"error": "invalid session"}), 400
 
     medicines  = db.get_medicines_for_session(sess)
+    settings   = db.get_settings()
+    style      = settings.get("message_style", "table")
 
     # Send to Telegram recipients
     tg_recipients = db.get_active_recipients()
-    tg_results    = telegram_bot.broadcast_reminder(sess, medicines, tg_recipients)
+    tg_results    = telegram_bot.broadcast_reminder(sess, medicines, tg_recipients, style)
 
     total = len(tg_results)
     flash(tr("test_sent", count=total), "info")

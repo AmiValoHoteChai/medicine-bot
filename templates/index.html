@@ -452,6 +452,18 @@
                   "রাত" }}</label>
                 <input type="time" class="form-control" name="rater_time" value="{{ settings.rater_time }}" required>
               </div>
+              <div class="mb-3">
+                <label class="form-label small fw-bold">💬 {{ "Message Style" if lang == "en" else "মেসেজ স্টাইল"
+                  }}</label>
+                <select class="form-select" name="message_style">
+                  <option value="list" {{ 'selected' if settings.get('message_style','table')=='list' }}>📝 {{ "List
+                    (Classic)" if lang == "en" else "তালিকা (ক্লাসিক)" }}</option>
+                  <option value="table" {{ 'selected' if settings.get('message_style','table')=='table' }}>📊 {{ "Table
+                    (SQLite)" if lang == "en" else "টেবিল (SQLite)" }}</option>
+                  <option value="card" {{ 'selected' if settings.get('message_style','table')=='card' }}>💎 {{ "Card
+                    (Box)" if lang == "en" else "কার্ড (বক্স)" }}</option>
+                </select>
+              </div>
               <button class="btn btn-primary w-100" type="submit">
                 <i class="bi bi-check-circle"></i> {{ "Save Times" if lang == "en" else "সময় সেভ করুন" }}
               </button>
