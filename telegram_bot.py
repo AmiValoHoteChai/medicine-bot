@@ -48,6 +48,17 @@ def _short_end(end_date_str):
         return ""
 
 
+ASCII_DIGITS = str.maketrans("০১২৩৪৫৬৭৮৯", "0123456789")
+
+def _dose_ascii(dose_str):
+    """Convert Bangla dose to ASCII for table alignment. ১টা→1, ½টা→0.5"""
+    s = dose_str.replace("টা", "").strip()
+    s = s.translate(ASCII_DIGITS)
+    if s == "½":
+        s = "0.5"
+    return s
+
+
 def _ascii_table(headers, rows):
     """Build an ASCII table like SQLite output."""
     widths = [len(h) for h in headers]
@@ -73,8 +84,8 @@ def _med_table(medicines):
     rows = []
     for i, m in enumerate(medicines, 1):
         name = m["name"] if m.get("name") else m["name_bn"]
-        dose = m.get("effective_dose") or m.get("dose", "")
-        end  = _short_end(m.get("end_date")) or "—"
+        dose = _dose_ascii(m.get("effective_dose") or m.get("dose", ""))
+        end  = _short_end(m.get("end_date")) or "-"
         rows.append((str(i), name, dose, end))
     return _ascii_table(headers, rows)
 
