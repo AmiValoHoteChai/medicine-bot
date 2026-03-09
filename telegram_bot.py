@@ -1,6 +1,6 @@
 import requests
 import logging
-from datetime import datetime
+from datetime import datetime, date
 import pytz
 from config import TELEGRAM_API_BASE, TIMEZONE
 
@@ -17,10 +17,32 @@ SESSION_INFO = {
 #  Helpers
 # ─────────────────────────────────────────────
 
+BANGLA_MONTHS = {
+    1: "জানুয়ারি", 2: "ফেব্রুয়ারি", 3: "মার্চ", 4: "এপ্রিল",
+    5: "মে", 6: "জুন", 7: "জুলাই", 8: "আগস্ট",
+    9: "সেপ্টেম্বর", 10: "অক্টোবর", 11: "নভেম্বর", 12: "ডিসেম্বর",
+}
+
+BANGLA_DIGITS = str.maketrans("0123456789", "০১২৩৪৫৬৭৮৯")
+
+
 def _dhaka_time() -> str:
     tz  = pytz.timezone(TIMEZONE)
     now = datetime.now(tz)
     return now.strftime("%I:%M %p")
+
+
+def _format_end_date(end_date_str: str | None) -> str | None:
+    """Convert '2026-03-10' → '📅 শেষ: ১০ মার্চ'"""
+    if not end_date_str:
+        return None
+    try:
+        d = datetime.strptime(end_date_str, "%Y-%m-%d").date()
+        day = str(d.day).translate(BANGLA_DIGITS)
+        month = BANGLA_MONTHS.get(d.month, "")
+        return f"📅 শেষ: {day} {month}"
+    except ValueError:
+        return None
 
 
 # ─────────────────────────────────────────────
@@ -51,8 +73,9 @@ def build_bangla_message(session: str, medicines: list) -> str:
             display = m["name"] if m.get("name") else m["name_bn"]
             dose    = m.get("effective_dose") or m.get("dose", "১টা")
             lines.append(f"{i}. {display}  ·  {dose}")
-            if m.get("note"):
-                lines.append(f"   ⚠️ {m['note']}")
+            end_label = _format_end_date(m.get("end_date"))
+            if end_label:
+                lines.append(f"   {end_label}")
             lines.append("")
 
     if age_meds and por_meds:
@@ -65,8 +88,9 @@ def build_bangla_message(session: str, medicines: list) -> str:
             display = m["name"] if m.get("name") else m["name_bn"]
             dose    = m.get("effective_dose") or m.get("dose", "১টা")
             lines.append(f"{i}. {display}  ·  {dose}")
-            if m.get("note"):
-                lines.append(f"   ⚠️ {m['note']}")
+            end_label = _format_end_date(m.get("end_date"))
+            if end_label:
+                lines.append(f"   {end_label}")
             lines.append("")
 
     lines.append("━━━━━━━━━━━━━━━━━━")
