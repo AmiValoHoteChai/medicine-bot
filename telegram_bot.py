@@ -80,13 +80,14 @@ def _ascii_table(headers, rows):
 
 def _med_table(medicines):
     """Build a medicine table for a timing group."""
-    headers = ("#", "Medicine", "Dose", "End")
+    headers = ("#", "Medicine", "Dose", "End", "Note")
     rows = []
     for i, m in enumerate(medicines, 1):
         name = m["name"] if m.get("name") else m["name_bn"]
         dose = _dose_ascii(m.get("effective_dose") or m.get("dose", ""))
         end  = _short_end(m.get("end_date")) or "-"
-        rows.append((str(i), name, dose, end))
+        note = m.get("note", "") or ""
+        rows.append((str(i), name, dose, end, note))
     return _ascii_table(headers, rows)
 
 
