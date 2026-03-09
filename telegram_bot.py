@@ -79,16 +79,48 @@ def _ascii_table(headers, rows):
 
 
 def _med_table(medicines):
-    """Build a medicine table for a timing group."""
-    headers = ("#", "Medicine", "Dose", "End", "Note")
+    """Build a medicine table for a timing group using multiline rows."""
+    headers = ("#", "Medicine (Dose)")
     rows = []
+    
+    # Pre-process rows to find the max width needed for the 2nd column
     for i, m in enumerate(medicines, 1):
         name = m["name"] if m.get("name") else m["name_bn"]
         dose = _dose_ascii(m.get("effective_dose") or m.get("dose", ""))
-        end  = _short_end(m.get("end_date")) or "-"
-        note = m.get("note", "") or ""
-        rows.append((str(i), name, dose, end, note))
-    return _ascii_table(headers, rows)
+        end  = _short_end(m.get("end_date"))
+        note = m.get("note", "").strip()
+        
+        line1 = f"{name} ({dose})"
+        
+        line2_parts = []
+        if end: line2_parts.append(f"End: {end}")
+        if note: line2_parts.append(note)
+        line2 = " | ".join(line2_parts) if line2_parts else ""
+
+        rows.append((str(i), line1, line2))
+
+    # Calculate column widths
+    w0 = 1 # '#' column
+    w1 = len("Medicine (Dose)")
+    for i, l1, l2 in rows:
+        w1 = max(w1, len(l1))
+        if len(l2) > 0:
+            w1 = max(w1, len(l2))
+
+    sep = "+" + "-" * (w0 + 2) + "+" + "-" * (w1 + 2) + "+"
+
+    def fmt(c0, c1):
+        return f"| {c0.ljust(w0)} | {c1.ljust(w1)} |"
+
+    lines = [sep, fmt(headers[0], headers[1]), sep]
+    
+    for i, l1, l2 in rows:
+        lines.append(fmt(i, l1))
+        if l2:
+            lines.append(fmt("", l2))
+        lines.append(sep)
+
+    return "\n".join(lines)
 
 
 
